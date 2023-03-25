@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persitence.Firebase", "Persitence.Firebase\Persitence.Firebase.csproj", "{C8C87862-F2C5-4A70-AD4A-7C1372E4E760}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generators", "Generators\Generators.csproj", "{4F0C6A07-F967-442F-8B3C-175530BB8842}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{C8C87862-F2C5-4A70-AD4A-7C1372E4E760}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8C87862-F2C5-4A70-AD4A-7C1372E4E760}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8C87862-F2C5-4A70-AD4A-7C1372E4E760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F0C6A07-F967-442F-8B3C-175530BB8842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F0C6A07-F967-442F-8B3C-175530BB8842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F0C6A07-F967-442F-8B3C-175530BB8842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0C6A07-F967-442F-8B3C-175530BB8842}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
