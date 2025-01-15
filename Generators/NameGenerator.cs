@@ -4,8 +4,6 @@ public static partial class NameGenerator
 {
   private static readonly Random Random = new();
   
-  public static string GetRandomName()
-  {
-    return $"{Forenames[Random.Next(0, Forenames.Length)]} {Surnames[Random.Next(0, Surnames.Length)]}";
-  }
+  public static string GetRandomName() => 
+    $"{Random.Pick(Forenames)} {Random.Pick(Surnames)}";
 }

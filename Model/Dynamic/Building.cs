@@ -2,8 +2,8 @@
 
 public class Building
 {
-  public required Guid Id { get; set; }
-  public required BuildingType Type { get; set; }
-  public required List<Citizen> Workers { get; set; }
+  public Guid Id { get; init; } = Guid.CreateVersion7();
+  public required BuildingType Type { get; init; }
+  public ICollection<Citizen> Workers { get; } = new List<Citizen>();
   public Recipe? CurrentRecipe { get; set; }
 }
