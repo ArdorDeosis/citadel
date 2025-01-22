@@ -1,32 +1,48 @@
-﻿using System.Reflection;
-using Ember.DependencyInjection;
+﻿using System.Collections.Concurrent;
+using Fyremoss.DependencyInjection;
+using GameKernel;
+using GameKernel.TickSystem;
 
 namespace Operations;
 
-public class OperationEngine
+/// <summary>
+/// Executes operations thread-safe.
+/// </summary>
+public class OperationEngine : ITicking
 {
-  private readonly IActivator activator;
-  private readonly Queue<IOperation> operations = new();
+  private readonly IInjector injector;
+  private readonly ErrorHandler errorHandler;
+  private readonly ConcurrentQueue<IOperation> operations = new();
   
-  public OperationEngine(IActivator activator)
+  public OperationEngine(IInjector injector, ErrorHandler errorHandler)
   {
-    this.activator = activator;
+    this.injector = injector;
+    this.errorHandler = errorHandler;
   }
 
-  public void Execute<TOperation>() where TOperation : Operation => 
-    operations.Enqueue(activator.CreateInstance<TOperation>());
-
-  public void Execute<TOperation, TPayload>(TPayload payload) where TOperation : Operation<TPayload>
+  /// <summary>
+  /// Executes the specified <paramref name="operation"/>.
+  /// </summary>
+  /// <param name="operation">The operation to execute.</param>
+  public void Execute(IOperation operation)
   {
-    var operation = activator.CreateInstance<TOperation>();
-
-    typeof(Operation<TPayload>).GetProperty(
-      nameof(Operation<TPayload>.Payload),
-      BindingFlags.Instance | BindingFlags.NonPublic
-    )!.SetValue(operation, payload);
-    
+    injector.InjectProperties(operation);
     operations.Enqueue(operation);
   }
 
-  private bool TryExecute(Operation operation) => operation.Perform();
+  /// <inheritdoc />
+  public void Tick(double deltaTime)
+  {
+    while (operations.TryDequeue(out var operation))
+    {
+      try
+      {
+        operation.Perform();
+      }
+      catch (Exception exception)
+      {
+        errorHandler(exception);
+      }
+    }
+  }
 }

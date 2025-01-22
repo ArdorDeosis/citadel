@@ -1,17 +1,14 @@
 ﻿namespace Operations;
 
+/// <summary>
+/// An operation to be executed by the <see cref="OperationEngine"/>.
+/// </summary>
+// TODO: this probably needs some form of feedback mechanism at some point
 public interface IOperation
 {
-  internal bool Perform();
-}
-
-public abstract class Operation : IOperation
-{
-  public abstract bool Perform();
-}
-
-public abstract class Operation<TPayload> : IOperation
-{
-  protected internal TPayload Payload { get; protected init; } = default!;
-  public abstract bool Perform();
+  /// <summary>
+  /// Performs the operation.
+  /// </summary>
+  /// <returns></returns>
+  internal void Perform();
 }

@@ -3,4 +3,8 @@
     <ProjectReference Include="..\GameKernel\GameKernel.csproj" />
     <ProjectReference Include="..\State\State.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fyremoss.DependencyInjection.Abstraction" Version="0.1.1" />
+    <PackageReference Include="Fyremoss.DependencyInjection.PropertyInjection" Version="0.1.1" />
+  </ItemGroup>
 </Project>

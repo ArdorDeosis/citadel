@@ -3,24 +3,27 @@ using System.Diagnostics;
 
 namespace GameKernel.TickSystem;
 
-public class TickMaster : ITickMaster
+internal class TickMaster : ITickMaster
 {
   private readonly Thread tickThread;
   private volatile bool isRunning;
-  
+
   private readonly HashSet<WeakReference<ITicking>> references = [];
   private readonly ConcurrentBag<ITicking> pendingRegistration = [];
   private readonly ConcurrentBag<ITicking> pendingRemoval = [];
-  
+
   private readonly Lock registrationLock = new();
   private readonly Lock removalLock = new();
 
-  private readonly Action<Exception>? ErrorHandler;
+  private readonly ErrorHandler? errorHandler;
+  
+  private readonly ManualResetEvent tickStartEvent = new(false);
+  private readonly ManualResetEvent tickEndEvent = new(false);
 
-  public TickMaster(Action<Exception>? errorHandler = null)
+  public TickMaster(ErrorHandler? errorHandler = null)
   {
-    ErrorHandler = errorHandler;
-    tickThread = new Thread(TickLoop);
+    this.errorHandler = errorHandler;
+    tickThread = new Thread(TickLoop) { Name = "Tick Thread" };
   }
 
   /// <inheritdoc />
@@ -52,7 +55,31 @@ public class TickMaster : ITickMaster
   public void Stop()
   {
     isRunning = false;
+    tickStartEvent.Set();
+    tickEndEvent.Set();
     tickThread.Join();
+  }
+
+  /// <inheritdoc />
+  public void WaitForTickStart()
+  {
+    ThrowIfOnTickThread();
+    tickStartEvent.WaitOne();
+  }
+
+  /// <inheritdoc />  
+  public void WaitForTickEnd()
+  {
+    ThrowIfOnTickThread();
+    tickEndEvent.WaitOne();
+  }
+
+  /// <inheritdoc />
+  public void WaitForFullTick()
+  {
+    ThrowIfOnTickThread();
+    tickStartEvent.WaitOne();
+    tickEndEvent.WaitOne();
   }
 
   /// <summary>
@@ -60,15 +87,27 @@ public class TickMaster : ITickMaster
   /// </summary>
   private void TickLoop()
   {
-    var stopwatch = Stopwatch.StartNew();
-    while (isRunning)
+    try
     {
-      var deltaTime = stopwatch.Elapsed.TotalSeconds;
-      stopwatch.Restart();
+      var stopwatch = Stopwatch.StartNew();
+      while (isRunning)
+      {
+        var deltaTime = stopwatch.Elapsed.TotalSeconds;
+        stopwatch.Restart();
 
-      TickInstances(deltaTime);
-      AddPendingReferences();
-      CleanupReferences();
+        tickStartEvent.Pulse();
+
+        TickInstances(deltaTime);
+        AddPendingReferences();
+        CleanupReferences();
+        
+        tickEndEvent.Pulse();
+      }
+    }
+    catch (Exception exception)
+    {
+      Console.WriteLine(exception);
+      throw;
     }
   }
 
@@ -87,7 +126,7 @@ public class TickMaster : ITickMaster
       }
       catch (Exception exception)
       {
-        ErrorHandler?.Invoke(exception);
+        errorHandler?.Invoke(exception);
       }
     }
   }
@@ -115,5 +154,20 @@ public class TickMaster : ITickMaster
         reference => !reference.TryGetTarget(out var instance) || pendingRemoval.Contains(instance));
       pendingRemoval.Clear();
     }
+  }
+
+  private void ThrowIfOnTickThread()
+  {
+    if (Thread.CurrentThread == tickThread)
+      throw new InvalidOperationException("Can not wait for tick events on the tick thread.");
+  }
+}
+
+file static class Extensions
+{
+  public static void Pulse(this ManualResetEvent resetEvent)
+  {
+    resetEvent.Set();
+    resetEvent.Reset();
   }
 }

@@ -1,18 +1,23 @@
-﻿using Model;
+﻿using Fyremoss.DependencyInjection;
+using Model;
 using State;
 
 namespace Operations;
 
-public class CreateBuildingOperation : Operation
+public class CreateBuildingOperation : IOperation
 {
-  private readonly Repository repository;
-  private readonly BuildingType type;
+  [Inject] private Repository Repository { get; init; } = null!;
   
-  public CreateBuildingOperation(Repository repository, BuildingType type)
+  private BuildingType Type { get; init; }
+  
+  public CreateBuildingOperation(BuildingType type)
   {
-    this.repository = repository;
-    this.type = type;
+    Type = type;
   }
 
-  public override bool Perform() => repository.AddBuilding(type) is not null;
+  /// <inheritdoc />
+  public void Perform()
+  {
+    Repository.AddBuilding(Type);
+  }
 }

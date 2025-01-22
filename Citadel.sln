@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFi
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "Host\Host.csproj", "{96E0A80D-23EC-4FEA-A940-7F0C4249E568}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,5 +49,9 @@ Global
 		{5A382EEB-71A0-409A-A5D6-EA8323E809BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A382EEB-71A0-409A-A5D6-EA8323E809BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A382EEB-71A0-409A-A5D6-EA8323E809BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96E0A80D-23EC-4FEA-A940-7F0C4249E568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96E0A80D-23EC-4FEA-A940-7F0C4249E568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96E0A80D-23EC-4FEA-A940-7F0C4249E568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96E0A80D-23EC-4FEA-A940-7F0C4249E568}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
